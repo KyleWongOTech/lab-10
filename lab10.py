@@ -11,31 +11,112 @@
 
 
 def eval_rpn(tokens):
-    # Outline (write your plan here first):
+    # Outline (write your plan here first): Go through each element in the array, because we
+    #know that every element is either an intger or a operator we add all intgers to a secondary
+    #list. if the next option is an operator we do that operator with the integers in the list
+    #
     #   ...
-    # TODO: `tokens` is a list of strings in Reverse Polish Notation - either an integer
-    #   or one of the operators "+", "-", "*", "/". Evaluate it and return the integer
-    #   result. Division should truncate toward zero (int(a / b)).
-    #   Example: ["2","1","+","3","*"]  ->  9
-    pass
+    temp:list[int] = []
+    temp1 = 0
+    temp2 = 0
+    value= 0
+    for i in range(len(tokens)):
+        if tokens[i] not in "+-/*":
+            temp.append(int(tokens[i]))
+        else:
+            match tokens[i]:
+                case '+':
+                    temp1=temp.pop(-1)
+                    temp2=temp.pop(-1)
+                    value = temp2+temp1
+                    temp.append(value)
+                case '-':
+                    temp1=temp.pop(-1)
+                    temp2=temp.pop(-1)
+                    value = temp2-temp1
+                    temp.append(value)
+                case '*':
+                    temp1=temp.pop(-1)
+                    temp2=temp.pop(-1)
+                    value = temp2*temp1
+                    temp.append(value)
+                case '/':
+                    temp1=temp.pop(-1)
+                    temp2=temp.pop(-1)
+                    value = int(temp2/temp1)
+                    temp.append(value)
+
+
+    return int(value)
 
 
 def decode_string(s):
-    # Outline:
+    # Outline: you serach through the string and 
     #   ...
     # TODO: decode a string written with the rule k[encoded], meaning `encoded` repeated
     #   k times. The brackets can be nested.
     #   Example: "3[a2[c]]"  ->  "accaccacc"
+    stack = []
+    num:int
+    myStr:str
+
+    for temp in s:
+        if temp!=']':
+            stack.append(temp)
+
+        else:
+            myStr=""
+            while stack and stack[-1]!='[':
+                myStr=stack.pop()+myStr
+            stack.pop()
+            num=int(stack.pop())
+            stack.append(myStr*num)
+
+    myStr=""
+    for char in stack:
+        myStr += char
+
+    return myStr
+
+
+
+
+
     pass
 
 
 def daily_temperatures(temps):
-    # Outline:
+    # Outline: create a stack of the numbers that have not been added yet, then
+    #you peek at the top of the stack and if its less then next number you add the
+    #length of the list to a new list containting the days waiting, if its not then
+    #you loop through all elements of the list ahaed of your current index
+    #if any of them are greater you return the length of the stack + the index you
+    #searched through minus the originial index of your loop
     #   ...
-    # TODO: for each day, return how many days you'd wait for a WARMER temperature.
-    #   Put 0 if no warmer day ever comes.
-    #   Example: [73,74,75,71,69,72,76,73]  ->  [1,1,4,2,1,1,0,0]
-    pass
+
+    stacks = []
+    my_list = []
+
+    for i in range(len(temps)):
+        if stacks:
+            if stacks[-1]<temps[i]:
+                my_list.append(len(stacks))
+                stacks.pop()
+            else:
+                for j in range(i,len(temps)):
+                    if stacks[-1]<temps[j]:
+                        my_list.append(len(stacks)+j-i)
+                        stacks.pop()
+                        break
+
+        stacks.append(temps[i])
+
+
+    while stacks:
+        my_list.append(0)
+        stacks.pop()
+
+    return my_list
 
 
 def num_islands(grid):   # Part 4 - stretch (optional)
@@ -49,7 +130,7 @@ def num_islands(grid):   # Part 4 - stretch (optional)
 
 def main():
     # Optional scratch space - try your functions here, then run: python lab10.py
-    # print(eval_rpn(["2", "1", "+", "3", "*"]))   # 9
+    print( decode_string("3[a]2[bc]") ) # "aaabcbc"
     pass
 
 
